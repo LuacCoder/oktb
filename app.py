@@ -24,7 +24,7 @@ load_dotenv()
 BOT_TOKEN = os.environ["BOT_TOKEN"]
 ADMIN_IDS = {int(x) for x in os.environ.get("ADMIN_IDS", "8160958113").split(",") if x.strip()}
 WEBHOOK_SECRET = os.environ.get("WEBHOOK_SECRET", "vgatk-secret")
-BASE_URL = os.environ["https://oktb.onrender.com"]  # напр. https://vgatk-bot.onrender.com
+BASE_URL = os.environ["BASE_URL"]
 
 logging.basicConfig(level=logging.INFO)
 log = logging.getLogger("vgatk_bot")
