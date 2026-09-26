@@ -1,6 +1,6 @@
 """
-Распознавание расписания с фотографии через Gemini Vision (бесплатный
-API у Google, ключ на aistudio.google.com/apikey).
+Распознавание расписания с фотографии через OpenRouter (бесплатные vision-модели).
+Ключ получи на https://openrouter.ai/keys — регается по почте, без карты.
 
 Возвращает список записей вида:
 {"group": "ИС-21", "day": "Понедельник", "pair_number": 1,
@@ -10,10 +10,15 @@ API у Google, ключ на aistudio.google.com/apikey).
 import json
 import os
 
-from google import genai
-from google.genai import types
+from openai import OpenAI
 
-client = genai.Client(api_key=os.environ["GEMINI_API_KEY"])
+client = OpenAI(
+    api_key=os.environ["OPENROUTER_API_KEY"],
+    base_url="https://openrouter.ai/api/v1",
+)
+
+# Бесплатная vision-модель на OpenRouter (50 запросов/день бесплатно)
+MODEL = "qwen/qwen2.5-vl-32b-instruct:free"
 
 EXTRACTION_PROMPT = """Ты — ассистент, который извлекает расписание занятий колледжа с фотографии таблицы расписания.
 
@@ -44,14 +49,32 @@ EXTRACTION_PROMPT = """Ты — ассистент, который извлек�
 
 
 def parse_schedule_image(image_bytes: bytes) -> list[dict]:
-    response = client.models.generate_content(
-        model="gemini-2.0-flash",
-        contents=[
-            EXTRACTION_PROMPT,
-            types.Part.from_bytes(data=image_bytes, mime_type="image/jpeg"),
+    # OpenAI API ожидает base64 для изображений
+    import base64
+
+    b64_image = base64.b64encode(image_bytes).decode("utf-8")
+
+    response = client.chat.completions.create(
+        model=MODEL,
+        messages=[
+            {
+                "role": "user",
+                "content": [
+                    {"type": "text", "text": EXTRACTION_PROMPT},
+                    {
+                        "type": "image_url",
+                        "image_url": {
+                            "url": f"data:image/jpeg;base64,{b64_image}"
+                        },
+                    },
+                ],
+            }
         ],
+        max_tokens=4096,
+        temperature=0.1,
     )
-    text = response.text.strip()
+
+    text = response.choices[0].message.content.strip()
 
     # На случай если модель всё же обернёт ответ в ```json ... ```
     if text.startswith("```"):
