@@ -42,11 +42,6 @@ async def on_startup() -> None:
     log.info("Webhook установлен на %s/webhook/***", BASE_URL)
 
 
-@app.on_event("shutdown")
-async def on_shutdown() -> None:
-    await bot.delete_webhook()
-
-
 @dp.message(Command("start"))
 async def cmd_start(message: Message) -> None:
     await message.answer(
