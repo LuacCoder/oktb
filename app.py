@@ -21,7 +21,7 @@ from llm_parser import parse_schedule_image
 
 load_dotenv()
 
-BOT_TOKEN = os.environ["8602651109:AAFV-ENWIq5dfbi2PiKKsvFh8FmvfDql-ds"]
+BOT_TOKEN = os.environ["BOT_TOKEN"]
 ADMIN_IDS = {int(x) for x in os.environ.get("ADMIN_IDS", "8160958113").split(",") if x.strip()}
 WEBHOOK_SECRET = os.environ.get("WEBHOOK_SECRET", "vgatk-secret")
 BASE_URL = os.environ["https://oktb.onrender.com"]  # напр. https://vgatk-bot.onrender.com
