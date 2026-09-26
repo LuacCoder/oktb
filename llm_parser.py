@@ -18,7 +18,7 @@ client = OpenAI(
 )
 
 # Бесплатная vision-модель на OpenRouter
-MODEL = "meta-llama/llama-3.2-11b-vision-instruct:free"
+MODEL = "qwen/qwen2.5-vl-72b-instruct:free"
 
 EXTRACTION_PROMPT = """Ты — ассистент, который извлекает расписание занятий колледжа с фотографии таблицы расписания.
 
